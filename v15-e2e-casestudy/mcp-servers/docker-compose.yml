@@ -1,0 +1,21 @@
+services:
+  complaint-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: complaint-management-mcp
+    image: iomega/complaint-management-mcp:latest
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+    volumes:
+      - ./db:/app/db
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
