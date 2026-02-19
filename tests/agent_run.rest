@@ -1,0 +1,15 @@
+POST http://localhost:7071/api/agents/HelloAgent/run
+Content-Type: application/json
+
+{
+ "message": {
+    "text": "what's the capital of France?"
+ },
+ "agentConfig": {
+    "agentName": "HelloAgent",
+    "agentType": "hello_agent",
+    "agentSettings": {
+        "greeting": "Hello"
+    }
+ }
+}

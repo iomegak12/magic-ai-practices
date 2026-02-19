@@ -1,0 +1,19 @@
+services:
+  complaint-mcp:
+    image: complaints-mgmt-mcp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: complaint-mcp-server
+    env_file:
+      - .env.docker
+    ports:
+      - "8000:8000"
+    volumes:
+      - complaint-db:/app/db
+      - complaint-logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  complaint-db:
+  complaint-logs:

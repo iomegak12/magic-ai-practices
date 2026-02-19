@@ -1,0 +1,53 @@
+# ---- Python cache ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ---- Virtual environments ----
+env/
+venv/
+.venv/
+ENV/
+
+# ---- Local secrets / config (Docker uses .env.docker via env_file) ----
+.env
+.env.example
+
+# ---- Database & logs (mounted as named volumes at runtime) ----
+db/
+logs/
+
+# ---- Tests ----
+tests/
+
+# ---- Development artefacts ----
+.git/
+.gitignore
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+htmlcov/
+.coverage
+coverage.xml
+
+# ---- Docker files themselves (not needed inside the image) ----
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ---- IDE / OS ----
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# ---- Documentation ----
+*.md
+LICENSE
+CHANGELOG.md
+CONTRIBUTING.md
