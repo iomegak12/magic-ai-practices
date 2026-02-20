@@ -1,0 +1,22 @@
+services:
+  msav15-agent-service:
+    build: .
+    container_name: msav15-agent-service
+    image: iomega/msav15-agent-service:latest
+    ports:
+      - "9080:9080"
+    volumes:
+      - orders_data:/app/data
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    networks:
+      - msav15-network
+
+volumes:
+  orders_data:
+    driver: local
+
+networks:
+  msav15-network:
+    driver: bridge

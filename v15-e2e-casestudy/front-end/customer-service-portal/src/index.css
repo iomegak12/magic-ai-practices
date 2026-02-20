@@ -1,0 +1,85 @@
+/*
+ * MSAv15 Customer Service Portal
+ * Global styles — Tabler Admin handles the primary styling via CDN.
+ * Only minimal overrides/additions are placed here.
+ */
+
+/* Ensure full viewport height for the page layout */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Collapsible sidebar
+   Override Tabler's --tblr-navbar-width CSS variable so both the sidebar
+   width AND the page-wrapper margin-left adjust together.
+════════════════════════════════════════════════════════════════════════ */
+.navbar-vertical {
+  transition: width 0.22s ease !important;
+  overflow-x: hidden;
+}
+
+.page-wrapper {
+  transition: margin-left 0.22s ease !important;
+}
+
+/* Expanded: default Tabler width (15rem) — no override needed */
+
+/* Collapsed: narrow icon-only rail */
+.page.sidebar-collapsed {
+  --tblr-navbar-width: 4.5rem;
+}
+
+.page.sidebar-collapsed .nav-link-title,
+.page.sidebar-collapsed .sidebar-brand-text,
+.page.sidebar-collapsed .sidebar-collapse-label {
+  display: none !important;
+}
+
+.page.sidebar-collapsed .nav-link {
+  justify-content: center;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.page.sidebar-collapsed .nav-link-icon {
+  margin-right: 0 !important;
+}
+
+.page.sidebar-collapsed .sidebar-brand {
+  justify-content: center;
+}
+
+/* Ensure page-wrapper margin tracks the inline-styled sidebar width */
+.page.sidebar-collapsed .page-wrapper {
+  margin-left: 4.5rem !important;
+}
+
+/* Sidebar toggle button */
+.sidebar-toggle-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.sidebar-toggle-btn:hover {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Theme transition — smooth color changes
+════════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.1s ease;
+}
+
