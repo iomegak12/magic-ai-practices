@@ -1,0 +1,73 @@
+# pip install fastmcp==2.10.6
+
+from typing import Dict, Any, List, Optional
+from datetime import datetime
+from fastapi import FastAPI
+from mcp.server.fastmcp import FastMCP
+import uvicorn
+import signal
+import sys
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+mcp = FastMCP(
+    name="calculation-server",
+    instructions="this is a sample calcuation server",
+    host="0.0.0.0",
+    port=8000,
+)
+
+# Shutdown event flag
+shutdown_requested = False
+
+@mcp.tool(
+    name="add_numbers",
+    description="Add two numbers together and return the sum",
+    structured_output=True,
+)
+def add(a: float, b: float) -> Dict[str, Any]:
+    """Return the sum of two numbers in structured format"""
+    return {
+        "operation": "addition",
+        "operands": {"a": a, "b": b},
+        "result": a + b,
+        "success": True,
+    }
+
+def signal_handler(signum, frame):
+    """Handle shutdown signals gracefully"""
+    global shutdown_requested
+    signal_name = signal.Signals(signum).name
+    logger.info(f"Received {signal_name} signal. Initiating graceful shutdown...")
+    shutdown_requested = True
+    
+    # Log current tasks state before shutdown
+    logger.info(f"Shutting down with {len(tasks_store)} tasks in memory")
+    
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    # Register signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)   # Handle Ctrl+C
+    signal.signal(signal.SIGTERM, signal_handler)  # Handle termination signal
+    
+    logger.info("Starting Task Management MCP Server...")
+    logger.info("Server will be available at http://0.0.0.0:8000/mcp")
+    logger.info("Press Ctrl+C to stop the server gracefully")
+    
+    try:
+        mcp.run(transport="streamable-http", mount_path="/mcp")
+    except KeyboardInterrupt:
+        logger.info("Keyboard interrupt received. Shutting down gracefully...")
+    except Exception as e:
+        logger.error(f"Server error: {e}")
+        raise
+    finally:
+        logger.info("Server shutdown complete")

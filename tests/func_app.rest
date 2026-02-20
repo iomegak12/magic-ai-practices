@@ -1,0 +1,11 @@
+POST http://localhost:7071/api/agents/HostedAgent/run
+Content-Type: application/json
+
+{
+    "message": {
+        "text": "what's the capital  of Australia?"
+    },
+    "agentConfig": {
+        "agentType": "HostedAgent"
+    }
+}
