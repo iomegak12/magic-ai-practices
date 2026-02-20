@@ -114,6 +114,9 @@ openai-agents==0.9.0
 openai-chatkit==1.6.0
 openapi-pydantic==0.5.1
 opentelemetry-api==1.39.1
+opentelemetry-exporter-otlp-proto-common==1.39.1
+opentelemetry-exporter-otlp-proto-grpc==1.39.1
+opentelemetry-proto==1.39.1
 opentelemetry-sdk==1.39.1
 opentelemetry-semantic-conventions==0.60b1
 opentelemetry-semantic-conventions-ai==0.4.13
