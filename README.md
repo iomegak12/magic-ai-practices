@@ -2,7 +2,7 @@
 
 This repository contains practice notebooks and materials for learning AI agent development, Microsoft Agent Framework (MAF), and Model Context Protocol (MCP) servers.
 
-## Structure
+## Structure Changes
 
 - **`maf-101/`** - Microsoft Agent Framework basics
   - `1-simple-agent.ipynb` - Creating basic agents
