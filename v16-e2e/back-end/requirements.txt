@@ -1,0 +1,54 @@
+# ============================================
+# MSEv15E2E Dependencies
+# ============================================
+
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Configuration
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Azure AI Services
+azure-identity==1.15.0
+azure-ai-inference==1.0.0b1
+openai==1.10.0
+
+# Agent Framework
+# Note: Adjust package name based on actual availability
+# agent-framework==1.0.0
+# For now, assume it's available or will be installed separately
+
+# Database
+sqlalchemy==2.0.25
+
+# Email
+# Using standard library smtplib, no additional package needed
+
+# HTTP Client (for MCP)
+httpx==0.26.0
+aiofiles==23.2.1
+
+# Rate Limiting
+slowapi==0.1.9
+
+# Logging
+python-json-logger==2.0.7
+
+# Utilities
+typing-extensions==4.9.0
+
+# Testing (Development)
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+
+# Code Quality (Development)
+black==23.12.1
+flake8==7.0.0
+mypy==1.8.0
+pylint==3.0.3

@@ -1,0 +1,114 @@
+/**
+ * Global styles that complement Tabler's CSS.
+ * Tabler is loaded via CDN in index.html.
+ *
+ * Design system: Indigo blue & white (light) / dark slate (dark)
+ * Ref: UI_COMPONENT_GUIDE.md — Color Palette
+ */
+
+/* ── CSS Custom Properties ───────────────────────────────────── */
+:root {
+  /* Brand colours */
+  --color-primary:       #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark:  #4f46e5;
+  --color-success:       #2fb344;
+  --color-warning:       #f76707;
+  --color-danger:        #d63939;
+  --color-info:          #4299e1;
+
+  /* Chat bubble colours (light mode) */
+  --chat-user-bg:        #e0e7ff;
+  --chat-user-text:      #1e1b4b;
+  --chat-assistant-bg:   #f1f5f9;
+  --chat-assistant-text: #1e293b;
+  --chat-system-bg:      #fef3c7;
+  --chat-tool-bg:        #f3e8ff;
+
+  /* Font */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+[data-bs-theme="dark"] {
+  /* Chat bubble colours (dark mode) */
+  --chat-user-bg:        #312e81;
+  --chat-user-text:      #e0e7ff;
+  --chat-assistant-bg:   #334155;
+  --chat-assistant-text: #f1f5f9;
+  --chat-system-bg:      #713f12;
+  --chat-tool-bg:        #581c87;
+}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Utilities ───────────────────────────────────────────────── */
+.cursor-pointer { cursor: pointer; }
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Scrollbar (webkit) ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1.0); opacity: 1.0; }
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 2px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* ── Session panel — reveal delete button on row hover ─────── */
+button:hover > .session-delete-btn,
+button:focus-within > .session-delete-btn {
+  opacity: 1 !important;
+}
+
+/* ── Phase 5: SSE Streaming — blinking cursor ──────────────── */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.streaming-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  color: var(--color-primary, #6366f1);
+  animation: cursor-blink 0.75s step-end infinite;
+  user-select: none;
+}
+
+/* Placeholder dots reuse .typing-dot animation defined above */
+.streaming-placeholder {
+  min-height: 1.2em;
+}

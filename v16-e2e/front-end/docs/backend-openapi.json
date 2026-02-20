@@ -1,0 +1,1299 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Customer Service Agent API",
+        "description": "## AI-Powered Customer Service REST API\n\nThis API provides an intelligent customer service agent with:\n\n### 🤖 Core Features\n- **Conversational AI**: Natural language understanding powered by Azure OpenAI\n- **Multi-Turn Conversations**: Session-based dialogue management\n- **Order Management**: Query, track, and modify customer orders\n- **Email Communication**: Automated customer notifications\n- **Complaint Tracking**: MCP integration for complaint management\n\n### 🔧 Technical Capabilities\n- **Multi-Tenant**: Tenant isolation for session management\n- **Rate Limiting**: Configurable per-IP request throttling\n- **Request Tracing**: UUID-based request correlation\n- **Health Monitoring**: Liveness and readiness probes\n\n### 📚 Documentation\n- **Interactive Docs**: Available at `/docs` (Swagger UI)\n- **Alternative Docs**: Available at `/redoc` (ReDoc)\n- **OpenAPI Spec**: Available at `/openapi.json`\n\n### 🚀 Quick Start\n1. Check service health at `/health`\n2. Create a session at `/api/v1/agent/sessions`\n3. Send messages at `/api/v1/agent/messages`\n4. View session history at `/api/v1/sessions/{id}/history`\n",
+        "contact": {
+            "name": "API Support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health Check",
+                "description": "Get overall health status of the service and its components",
+                "operationId": "health_check_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HealthCheckResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/ready": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Readiness Check",
+                "description": "Check if the service is ready to accept requests",
+                "operationId": "readiness_check_health_ready_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReadinessCheckResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/live": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Liveness Check",
+                "description": "Simple liveness probe for Kubernetes/container orchestration",
+                "operationId": "liveness_check_health_live_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "type": "object",
+                                    "title": "Response Liveness Check Health Live Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/agent/sessions": {
+            "post": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Create Session",
+                "description": "Create a new conversation session with the agent",
+                "operationId": "create_session_agent_sessions_post",
+                "parameters": [
+                    {
+                        "name": "x-request-id",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "title": "X-Request-Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSessionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateSessionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "List Sessions",
+                "description": "List all active conversation sessions",
+                "operationId": "list_sessions_agent_sessions_get",
+                "parameters": [
+                    {
+                        "name": "x-request-id",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "title": "X-Request-Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListSessionsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/agent/messages": {
+            "post": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Send Message",
+                "description": "Send a message to the agent in a session",
+                "operationId": "send_message_agent_messages_post",
+                "parameters": [
+                    {
+                        "name": "x-request-id",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "title": "X-Request-Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SendMessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/agent/sessions/{session_id}": {
+            "delete": {
+                "tags": [
+                    "Agent"
+                ],
+                "summary": "Delete Session",
+                "description": "Delete a conversation session",
+                "operationId": "delete_session_agent_sessions__session_id__delete",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Session Id"
+                        }
+                    },
+                    {
+                        "name": "x-request-id",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "title": "X-Request-Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteSessionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/info": {
+            "get": {
+                "tags": [
+                    "Info"
+                ],
+                "summary": "API Information",
+                "description": "Get information about the API",
+                "operationId": "get_api_info_info_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/APIInfo"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/info/tools": {
+            "get": {
+                "tags": [
+                    "Info"
+                ],
+                "summary": "List Tools",
+                "description": "Get information about available agent tools",
+                "operationId": "list_tools_info_tools_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListToolsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{session_id}/history": {
+            "get": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Get Session History",
+                "description": "Get conversation history for a session.\n\n**Parameters:**\n- `session_id`: Session identifier\n- `tenant_id`: Tenant identifier (default: \"default\")\n\n**Returns:**\n- Session history including all messages\n\n**Errors:**\n- `404`: Session not found\n- `410`: Session expired",
+                "operationId": "get_session_history_api_v1_sessions__session_id__history_get",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Session Id"
+                        }
+                    },
+                    {
+                        "name": "tenant_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Tenant identifier",
+                            "default": "default",
+                            "title": "Tenant Id"
+                        },
+                        "description": "Tenant identifier"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionHistoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{session_id}": {
+            "delete": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Delete Session",
+                "description": "Delete a session.\n\n**Parameters:**\n- `session_id`: Session identifier\n- `tenant_id`: Tenant identifier (default: \"default\")\n\n**Returns:**\n- Confirmation message\n\n**Errors:**\n- `404`: Session not found",
+                "operationId": "delete_session_api_v1_sessions__session_id__delete",
+                "parameters": [
+                    {
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Session Id"
+                        }
+                    },
+                    {
+                        "name": "tenant_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Tenant identifier",
+                            "default": "default",
+                            "title": "Tenant Id"
+                        },
+                        "description": "Tenant identifier"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions": {
+            "get": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "List Sessions",
+                "description": "List all sessions for a tenant.\n\n**Parameters:**\n- `tenant_id`: Tenant identifier (default: \"default\")\n- `limit`: Maximum number of sessions (1-100, default: 50)\n- `offset`: Number of sessions to skip (default: 0)\n\n**Returns:**\n- List of session summaries",
+                "operationId": "list_sessions_api_v1_sessions_get",
+                "parameters": [
+                    {
+                        "name": "tenant_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Tenant identifier",
+                            "default": "default",
+                            "title": "Tenant Id"
+                        },
+                        "description": "Tenant identifier"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1,
+                            "description": "Maximum number of sessions to return",
+                            "default": 50,
+                            "title": "Limit"
+                        },
+                        "description": "Maximum number of sessions to return"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Number of sessions to skip",
+                            "default": 0,
+                            "title": "Offset"
+                        },
+                        "description": "Number of sessions to skip"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/{session_id}/cleanup": {
+            "post": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Trigger Session Cleanup",
+                "description": "Manually trigger session cleanup (removes expired sessions).\n\nThis is typically called automatically by a background task,\nbut can be triggered manually via this endpoint.\n\n**Returns:**\n- Number of sessions deleted",
+                "operationId": "trigger_session_cleanup_api_v1_sessions__session_id__cleanup_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/sessions/stats": {
+            "get": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Get Session Stats",
+                "description": "Get session statistics.\n\n**Returns:**\n- Session statistics including total count",
+                "operationId": "get_session_stats_api_v1_sessions_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "tags": [
+                    "Root"
+                ],
+                "summary": "API Information",
+                "description": "Get basic API information including version and documentation links",
+                "operationId": "root__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "APIInfo": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name",
+                        "description": "API name"
+                    },
+                    "version": {
+                        "type": "string",
+                        "title": "Version",
+                        "description": "API version"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description",
+                        "description": "API description"
+                    },
+                    "documentation_url": {
+                        "type": "string",
+                        "title": "Documentation Url",
+                        "description": "Documentation URL"
+                    },
+                    "contact": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object",
+                        "title": "Contact",
+                        "description": "Contact information"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "documentation_url",
+                    "contact"
+                ],
+                "title": "APIInfo",
+                "description": "API information."
+            },
+            "CreateSessionRequest": {
+                "properties": {
+                    "session_id": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 100,
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Session Id",
+                        "description": "Optional custom session ID (auto-generated if not provided)"
+                    },
+                    "tenant_id": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 100,
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Tenant Id",
+                        "description": "Optional tenant identifier for multi-tenancy"
+                    },
+                    "metadata": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Metadata",
+                        "description": "Optional metadata to attach to the session"
+                    }
+                },
+                "type": "object",
+                "title": "CreateSessionRequest",
+                "description": "Request model for creating a new conversation session."
+            },
+            "CreateSessionResponse": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "title": "Session Id",
+                        "description": "Unique session identifier"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "description": "Operation status"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message",
+                        "description": "Human-readable message"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "title": "Created At",
+                        "description": "Session creation timestamp"
+                    },
+                    "metadata": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Metadata",
+                        "description": "Session metadata"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "status",
+                    "message",
+                    "created_at"
+                ],
+                "title": "CreateSessionResponse",
+                "description": "Response model for session creation."
+            },
+            "DeleteSessionResponse": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "title": "Session Id",
+                        "description": "Deleted session identifier"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "description": "Operation status"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message",
+                        "description": "Human-readable message"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "status",
+                    "message"
+                ],
+                "title": "DeleteSessionResponse",
+                "description": "Response model for session deletion."
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "HealthCheckResponse": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "description": "Overall health status: healthy, degraded, unhealthy"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "title": "Timestamp",
+                        "description": "Health check timestamp"
+                    },
+                    "version": {
+                        "type": "string",
+                        "title": "Version",
+                        "description": "API version"
+                    },
+                    "uptime_seconds": {
+                        "type": "number",
+                        "title": "Uptime Seconds",
+                        "description": "Server uptime in seconds"
+                    },
+                    "checks": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Checks",
+                        "description": "Individual component health checks"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "status",
+                    "timestamp",
+                    "version",
+                    "uptime_seconds",
+                    "checks"
+                ],
+                "title": "HealthCheckResponse",
+                "description": "Response model for health check."
+            },
+            "ListSessionsResponse": {
+                "properties": {
+                    "sessions": {
+                        "items": {
+                            "$ref": "#/components/schemas/SessionInfo"
+                        },
+                        "type": "array",
+                        "title": "Sessions",
+                        "description": "List of active sessions"
+                    },
+                    "total_count": {
+                        "type": "integer",
+                        "title": "Total Count",
+                        "description": "Total number of sessions"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "description": "Operation status"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "sessions",
+                    "total_count",
+                    "status"
+                ],
+                "title": "ListSessionsResponse",
+                "description": "Response model for listing sessions."
+            },
+            "ListToolsResponse": {
+                "properties": {
+                    "tools": {
+                        "items": {
+                            "$ref": "#/components/schemas/ToolInfo"
+                        },
+                        "type": "array",
+                        "title": "Tools",
+                        "description": "List of available tools"
+                    },
+                    "total_count": {
+                        "type": "integer",
+                        "title": "Total Count",
+                        "description": "Total number of tools"
+                    },
+                    "categories": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Categories",
+                        "description": "Available tool categories"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "tools",
+                    "total_count",
+                    "categories"
+                ],
+                "title": "ListToolsResponse",
+                "description": "Response model for listing available tools."
+            },
+            "ReadinessCheckResponse": {
+                "properties": {
+                    "ready": {
+                        "type": "boolean",
+                        "title": "Ready",
+                        "description": "Whether the service is ready to accept requests"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "description": "Readiness status"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "title": "Timestamp",
+                        "description": "Check timestamp"
+                    },
+                    "components": {
+                        "additionalProperties": {
+                            "type": "boolean"
+                        },
+                        "type": "object",
+                        "title": "Components",
+                        "description": "Component readiness status"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "ready",
+                    "status",
+                    "timestamp",
+                    "components"
+                ],
+                "title": "ReadinessCheckResponse",
+                "description": "Response model for readiness check."
+            },
+            "SendMessageRequest": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "maxLength": 10000,
+                        "minLength": 1,
+                        "title": "Message",
+                        "description": "User message to send to the agent"
+                    },
+                    "session_id": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "title": "Session Id",
+                        "description": "Session ID for the conversation"
+                    },
+                    "tenant_id": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "maxLength": 100,
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Tenant Id",
+                        "description": "Optional tenant identifier"
+                    },
+                    "stream": {
+                        "type": "boolean",
+                        "title": "Stream",
+                        "description": "Whether to stream the response (not yet implemented)",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "message",
+                    "session_id"
+                ],
+                "title": "SendMessageRequest",
+                "description": "Request model for sending a message to the agent."
+            },
+            "SendMessageResponse": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "title": "Session Id",
+                        "description": "Session identifier"
+                    },
+                    "response": {
+                        "type": "string",
+                        "title": "Response",
+                        "description": "Agent's response message"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "description": "Operation status"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "title": "Timestamp",
+                        "description": "Response timestamp"
+                    },
+                    "metadata": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Metadata",
+                        "description": "Response metadata"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "response",
+                    "status",
+                    "timestamp"
+                ],
+                "title": "SendMessageResponse",
+                "description": "Response model for agent message."
+            },
+            "SessionHistoryResponse": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "title": "Session Id"
+                    },
+                    "tenant_id": {
+                        "type": "string",
+                        "title": "Tenant Id"
+                    },
+                    "message_count": {
+                        "type": "integer",
+                        "title": "Message Count"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    },
+                    "last_activity": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Last Activity"
+                    },
+                    "messages": {
+                        "items": {
+                            "$ref": "#/components/schemas/SessionMessage"
+                        },
+                        "type": "array",
+                        "title": "Messages"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "tenant_id",
+                    "message_count",
+                    "created_at",
+                    "last_activity",
+                    "messages"
+                ],
+                "title": "SessionHistoryResponse",
+                "description": "Response model for session history endpoint."
+            },
+            "SessionInfo": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "title": "Session Id",
+                        "description": "Session identifier"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "title": "Created At",
+                        "description": "Creation timestamp"
+                    },
+                    "message_count": {
+                        "type": "integer",
+                        "title": "Message Count",
+                        "description": "Number of messages in session"
+                    },
+                    "last_activity": {
+                        "type": "string",
+                        "title": "Last Activity",
+                        "description": "Last activity timestamp"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "created_at",
+                    "message_count",
+                    "last_activity"
+                ],
+                "title": "SessionInfo",
+                "description": "Model for session information."
+            },
+            "SessionListResponse": {
+                "properties": {
+                    "tenant_id": {
+                        "type": "string",
+                        "title": "Tenant Id"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "title": "Total"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "title": "Limit"
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "title": "Offset"
+                    },
+                    "sessions": {
+                        "items": {
+                            "$ref": "#/components/schemas/SessionSummary"
+                        },
+                        "type": "array",
+                        "title": "Sessions"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "tenant_id",
+                    "total",
+                    "limit",
+                    "offset",
+                    "sessions"
+                ],
+                "title": "SessionListResponse",
+                "description": "Response model for listing sessions."
+            },
+            "SessionMessage": {
+                "properties": {
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "assistant",
+                            "system"
+                        ],
+                        "title": "Role"
+                    },
+                    "content": {
+                        "type": "string",
+                        "title": "Content"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Timestamp"
+                    },
+                    "tool_calls": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "additionalProperties": true,
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Tool Calls"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "role",
+                    "content"
+                ],
+                "title": "SessionMessage",
+                "description": "Single message in a conversation."
+            },
+            "SessionSummary": {
+                "properties": {
+                    "session_id": {
+                        "type": "string",
+                        "title": "Session Id"
+                    },
+                    "tenant_id": {
+                        "type": "string",
+                        "title": "Tenant Id"
+                    },
+                    "message_count": {
+                        "type": "integer",
+                        "title": "Message Count"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    },
+                    "last_activity": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Last Activity"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "session_id",
+                    "tenant_id",
+                    "message_count",
+                    "created_at",
+                    "last_activity"
+                ],
+                "title": "SessionSummary",
+                "description": "Summary information about a session."
+            },
+            "ToolInfo": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name",
+                        "description": "Tool name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description",
+                        "description": "Tool description"
+                    },
+                    "category": {
+                        "type": "string",
+                        "title": "Category",
+                        "description": "Tool category: order, email, complaint"
+                    },
+                    "available": {
+                        "type": "boolean",
+                        "title": "Available",
+                        "description": "Whether the tool is currently available"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "category",
+                    "available"
+                ],
+                "title": "ToolInfo",
+                "description": "Information about available tools."
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Root",
+            "description": "Root endpoint with API information"
+        },
+        {
+            "name": "Health",
+            "description": "Health check endpoints for monitoring and orchestration"
+        },
+        {
+            "name": "Agent",
+            "description": "Agent conversation endpoints for session and message management"
+        },
+        {
+            "name": "Sessions",
+            "description": "Session management endpoints for history and cleanup"
+        },
+        {
+            "name": "Info",
+            "description": "API information and tool listing"
+        }
+    ]
+}
