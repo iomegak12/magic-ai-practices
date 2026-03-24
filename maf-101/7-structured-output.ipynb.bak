@@ -1,0 +1,220 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "80827b53",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import asyncio\n",
+    "import os\n",
+    "from pydantic import BaseModel\n",
+    "from agent_framework.azure import AzureOpenAIResponsesClient\n",
+    "from azure.identity import AzureCliCredential"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "fa2ec63a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class OutputStruct(BaseModel):\n",
+    "    \"\"\"A structured output for testing purposes.\"\"\"\n",
+    "\n",
+    "    city: str\n",
+    "    description: str"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "0e54aa10",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "=== Non-streaming example ===\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"=== Non-streaming example ===\")\n",
+    "\n",
+    "credential = AzureCliCredential()\n",
+    "client = AzureOpenAIResponsesClient(\n",
+    "    project_endpoint=os.environ[\"AZURE_AI_PROJECT_ENDPOINT\"],\n",
+    "    deployment_name=os.environ[\"AZURE_OPENAI_RESPONSES_DEPLOYMENT_NAME\"],\n",
+    "    credential=credential,\n",
+    ")\n",
+    "\n",
+    "\n",
+    "agent = client.as_agent(\n",
+    "    name=\"CityAgent\",\n",
+    "    instructions=\"You are a helpful agent that describes cities in a structured format.\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "a07dc0c2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "User: Tell me about Paris, France\n"
+     ]
+    }
+   ],
+   "source": [
+    "query = \"Tell me about Paris, France\"\n",
+    "print(f\"User: {query}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "5e503dc0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Structured Output Agent:\n",
+      "City: Paris\n",
+<<<<<<< HEAD
+      "Description: Paris is the capital city of France, known for its art, fashion, culture, and gastronomy. It is home to iconic landmarks like the Eiffel Tower, Notre-Dame Cathedral, and the Louvre Museum. The city is also famous for its charming streets, cafes, and vibrant atmosphere, making it a leading global city.\n"
+=======
+      "Description: Paris, the capital city of France, is renowned for its art, fashion, gastronomy, and culture. It's home to iconic landmarks like the Eiffel Tower, Notre-Dame Cathedral, and the Louvre Museum. Known as the \"City of Light,\" Paris is a global hub for art and design, with charming streets, cafes, and a rich history evident in its architecture and museums. It's also famous for its culinary scene, with a plethora of cafes and restaurants offering exquisite French cuisine.\n"
+>>>>>>> 01273dd9e129a9d9a0826640db770c7c8f024eb1
+     ]
+    }
+   ],
+   "source": [
+    "result = await agent.run(query, options={\"response_format\": OutputStruct})\n",
+    "\n",
+    "if structured_data := result.value:\n",
+    "    print(\"Structured Output Agent:\")\n",
+    "    print(f\"City: {structured_data.city}\")\n",
+    "    print(f\"Description: {structured_data.description}\")\n",
+    "else:\n",
+    "    print(f\"Failed to parse response: {result.text}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "bcc5fe2c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "=== Streaming example ===\n",
+      "User: Tell me about Tokyo, Japan\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"=== Streaming example ===\")\n",
+    "\n",
+    "agent = client.as_agent(\n",
+    "    name=\"CityAgent\",\n",
+    "    instructions=\"You are a helpful agent that describes cities in a structured format.\",\n",
+    ")\n",
+    "\n",
+    "query = \"Tell me about Tokyo, Japan\"\n",
+    "print(f\"User: {query}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "65db8f9d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+<<<<<<< HEAD
+      "{\"city\":\"Tokyo\",\"description\":\"Tokyo, the capital of Japan, is a bustling metropolis known for its blend of traditional and modern architecture, including historic temples and cutting-edge skyscrapers. It is a global financial center, rich in culture, with numerous museums, parks, and shopping districts. Renowned for its food scene, Tokyo offers everything from sushi and ramen to international cuisine. The city is also famous for its efficient public transportation, anime culture, and vibrant nightlife.\"}\n"
+=======
+      "{\"city\":\"Tokyo\",\"description\":\"Tokyo is the capital city of Japan, known for its blend of traditional culture and modern innovation. It features landmarks like the historic Imperial Palace, the bustling Shibuya Crossing, and the iconic Tokyo Tower. The city offers a diverse range of experiences, from high-tech shopping in Akihabara to serene walks in the gardens of Shinjuku Gyoen. Tokyo is also renowned for its culinary scene, offering everything from sushi to ramen to international cuisine. As a global financial center, it hosts numerous multinational companies and is a hub for technology and finance.\"}\n"
+>>>>>>> 01273dd9e129a9d9a0826640db770c7c8f024eb1
+     ]
+    }
+   ],
+   "source": [
+    "stream = agent.run(query, stream=True, options={\"response_format\": OutputStruct})\n",
+    "async for update in stream:\n",
+    "    if update.text:\n",
+    "        print(update.text, end=\"\", flush=True)\n",
+    "print()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "da97f177",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Structured Output (from streaming with ResponseStream):\n",
+      "City: Tokyo\n",
+<<<<<<< HEAD
+      "Description: Tokyo, the capital of Japan, is a bustling metropolis known for its blend of traditional and modern architecture, including historic temples and cutting-edge skyscrapers. It is a global financial center, rich in culture, with numerous museums, parks, and shopping districts. Renowned for its food scene, Tokyo offers everything from sushi and ramen to international cuisine. The city is also famous for its efficient public transportation, anime culture, and vibrant nightlife.\n"
+=======
+      "Description: Tokyo is the capital city of Japan, known for its blend of traditional culture and modern innovation. It features landmarks like the historic Imperial Palace, the bustling Shibuya Crossing, and the iconic Tokyo Tower. The city offers a diverse range of experiences, from high-tech shopping in Akihabara to serene walks in the gardens of Shinjuku Gyoen. Tokyo is also renowned for its culinary scene, offering everything from sushi to ramen to international cuisine. As a global financial center, it hosts numerous multinational companies and is a hub for technology and finance.\n"
+>>>>>>> 01273dd9e129a9d9a0826640db770c7c8f024eb1
+     ]
+    }
+   ],
+   "source": [
+    "result = await stream.get_final_response()\n",
+    "\n",
+    "if structured_data := result.value:\n",
+    "    print(\"Structured Output (from streaming with ResponseStream):\")\n",
+    "    print(f\"City: {structured_data.city}\")\n",
+    "    print(f\"Description: {structured_data.description}\")\n",
+    "else:\n",
+    "    print(f\"Failed to parse response: {result.text}\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
+
+
