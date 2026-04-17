@@ -13,8 +13,6 @@ temp
 # C extensions
 *.so
 
-mcp
-
 # Distribution / packaging
 .Python
 build/
