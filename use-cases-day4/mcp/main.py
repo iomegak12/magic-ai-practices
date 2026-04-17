@@ -150,8 +150,11 @@ if __name__ == "__main__":
         )
         mcp._app = rate_limited_app
 
-    mcp.run(
-        transport="streamable-http",
-        host=settings.SERVER_HOST,
-        port=settings.SERVER_PORT,
-    )
+    try:
+        mcp.run(
+            transport="streamable-http",
+            host=settings.SERVER_HOST,
+            port=settings.SERVER_PORT,
+        )
+    except KeyboardInterrupt:
+        logger.info("Received shutdown signal — MCP server stopped")

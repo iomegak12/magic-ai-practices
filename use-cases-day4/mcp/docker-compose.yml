@@ -12,12 +12,6 @@ services:
     volumes:
       - mcp-db-data:/app/db
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8700/mcp')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
 volumes:
   mcp-db-data:

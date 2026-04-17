@@ -1,0 +1,28 @@
+# ──────────────────────────────────────────────────────────
+# clonescript.ai Front-End — .dockerignore
+# ──────────────────────────────────────────────────────────
+
+.git
+.gitignore
+.env
+.env.*
+
+node_modules
+dist
+
+.vscode
+.idea
+
+coverage
+.nyc_output
+
+*.log
+npm-debug.log*
+
+README.md
+TROUBLESHOOTING.md
+CONTRIBUTING.md
+CHANGELOG.md
+LICENSE
+docker-compose.yml
+docs/
