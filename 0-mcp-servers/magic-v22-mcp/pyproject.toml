@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "magic-v22-mcp"
+version = "0.1.0"
+description = "Magic v22 - Orders and Complaints Services MCP Server"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Ramkumar" }]
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=2.9.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+]
+
+[project.scripts]
+magic-v22-mcp = "magic_v22_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/magic_v22_mcp"]
+
+[tool.uv]
+dev-dependencies = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

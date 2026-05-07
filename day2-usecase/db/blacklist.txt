@@ -1,0 +1,32 @@
+# Blacklist for InputGuardrailMiddleware
+# One word per line. Lines starting with '#' and blank lines are ignored.
+# Matching is case-insensitive and whole-word (regex \b...\b).
+# Extend / curate this list to suit your organisation's policies.
+
+# --- Profanity / offensive (mild placeholders) ---
+damn
+crap
+stupid
+idiot
+moron
+
+# --- Hate / racial slurs (placeholder tokens — replace with real list under HR/Legal review) ---
+slur1
+slur2
+racistword
+
+# --- Crime / illegal activity ---
+kill
+murder
+bomb
+terrorist
+hack
+exploit
+ransom
+drugs
+narcotics
+
+# --- Harassment / threats ---
+threat
+attack
+assault

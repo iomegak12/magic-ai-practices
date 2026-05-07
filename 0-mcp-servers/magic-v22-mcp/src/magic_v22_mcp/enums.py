@@ -1,0 +1,37 @@
+"""Domain enumerations for orders and complaints."""
+
+from enum import StrEnum
+
+
+class OrderStatus(StrEnum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    SHIPPED = "SHIPPED"
+    DELIVERED = "DELIVERED"
+    CANCELLED = "CANCELLED"
+
+
+class ComplaintPriority(StrEnum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class ComplaintStatus(StrEnum):
+    OPEN = "OPEN"
+    IN_PROGRESS = "IN_PROGRESS"
+    RESOLVED = "RESOLVED"
+    CLOSED = "CLOSED"
+    REOPENED = "REOPENED"
+    CANCELLED = "CANCELLED"
+
+
+class ResolverTeam(StrEnum):
+    CUSTOMER_SUPPORT = "CUSTOMER_SUPPORT"
+    ORDER_FULFILLMENT = "ORDER_FULFILLMENT"
+    LOGISTICS = "LOGISTICS"
+    BILLING = "BILLING"
+    RETURNS_AND_REFUNDS = "RETURNS_AND_REFUNDS"
+    QUALITY_ASSURANCE = "QUALITY_ASSURANCE"
+    TECHNICAL_SUPPORT = "TECHNICAL_SUPPORT"
